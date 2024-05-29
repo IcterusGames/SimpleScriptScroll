@@ -9,7 +9,7 @@
 [node name="Settings" type="Window"]
 title = "Simple Script Scroll Settings"
 initial_position = 2
-size = Vector2i(360, 281)
+size = Vector2i(335, 256)
 wrap_controls = true
 transient = true
 exclusive = true
@@ -85,6 +85,15 @@ unique_name_in_owner = true
 layout_mode = 2
 max_value = 10.0
 
+[node name="Control" type="Control" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="KeyVimCheck" type="CheckBox" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Center cursor by pressing alt twice"
+
 [node name="About" type="MarginContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
 visible = false
 layout_mode = 2
@@ -129,5 +138,6 @@ text = "Close"
 [connection signal="item_selected" from="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer/StyleButton" to="." method="_on_style_button_item_selected"]
 [connection signal="value_changed" from="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer/MarginUpSpin" to="." method="_on_margin_up_spin_value_changed"]
 [connection signal="value_changed" from="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer/MarginDownSpin" to="." method="_on_margin_down_spin_value_changed"]
+[connection signal="toggled" from="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/KeyVimCheck" to="." method="_on_key_vim_check_toggled"]
 [connection signal="meta_clicked" from="MarginContainer/VBoxContainer/TabContainer/About/AboutRichText" to="." method="_on_about_rich_text_meta_clicked"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/CloseButton" to="." method="_on_close_requested"]

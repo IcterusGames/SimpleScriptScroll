@@ -35,6 +35,9 @@ const SETTINGS = preload("res://addons/simplescriptscroll/settings.tscn")
 var scroll_type := SCROLL_MARGIN_LINES
 var scroll_margin_lines_up := 5
 var scroll_margin_lines_down := 5
+var keyvim_style_enabled := true
+
+var _time_pressed_keyvim := 0
 
 
 func _enter_tree() -> void:
@@ -56,6 +59,7 @@ func load_config() -> void:
 	scroll_type = config.get_value("scroll", "type", SCROLL_MARGIN_LINES)
 	scroll_margin_lines_up = config.get_value("scroll", "margin_lines_up", 5)
 	scroll_margin_lines_down = config.get_value("scroll", "margin_lines_down", 5)
+	keyvim_style_enabled = config.get_value("scroll", "keyvim_style_enabled", true)
 
 
 func save_config() -> void:
@@ -63,12 +67,11 @@ func save_config() -> void:
 	config.set_value("scroll", "type", scroll_type)
 	config.set_value("scroll", "margin_lines_up", scroll_margin_lines_up)
 	config.set_value("scroll", "margin_lines_down", scroll_margin_lines_down)
+	config.set_value("scroll", "keyvim_style_enabled", keyvim_style_enabled)
 	config.save(get_editor_interface().get_editor_paths().get_config_dir().path_join("simplescriptscroll.cfg"))
 
 
 func tool_script_scroll_set_enable(enable : bool) -> void:
-	if scroll_type == SCROLL_NONE:
-		enable = false
 	if enable:
 		var script_editor : ScriptEditor = get_editor_interface().get_script_editor()
 		if not script_editor.editor_script_changed.is_connected(_on_editor_script_changed):
@@ -85,6 +88,8 @@ func tool_script_scroll_set_enable(enable : bool) -> void:
 			codeedit.scroll_past_end_of_file = get_editor_interface().get_editor_settings().get("text_editor/behavior/navigation/scroll_past_end_of_file")
 			if codeedit.caret_changed.is_connected(_on_codeedit_caret_changed):
 				codeedit.caret_changed.disconnect(_on_codeedit_caret_changed)
+			if codeedit.gui_input.is_connected(_on_codeedit_input):
+				codeedit.gui_input.disconnect(_on_codeedit_input)
 
 
 func _on_editor_script_changed(_script : Script) -> void:
@@ -94,12 +99,27 @@ func _on_editor_script_changed(_script : Script) -> void:
 	var codeedit = editor.get_base_editor()
 	if codeedit == null or not codeedit is CodeEdit:
 		return
-	if not codeedit.caret_changed.is_connected(_on_codeedit_caret_changed):
-		codeedit.caret_changed.connect(_on_codeedit_caret_changed.bind(codeedit))
+	if scroll_type != SCROLL_NONE:
+		if not codeedit.caret_changed.is_connected(_on_codeedit_caret_changed):
+			codeedit.caret_changed.connect(_on_codeedit_caret_changed.bind(codeedit))
+	if keyvim_style_enabled:
+		if not codeedit.gui_input.is_connected(_on_codeedit_input):
+			codeedit.gui_input.connect(_on_codeedit_input.bind(codeedit))
 	var end : int = codeedit.get_line_count()
 	var page : int = codeedit.get_v_scroll_bar().page
 	if end > page and page > 1:
 		codeedit.scroll_past_end_of_file = true
+
+
+func _on_codeedit_input(event : InputEvent, codeedit : CodeEdit) -> void:
+	if not keyvim_style_enabled or not event is InputEventKey:
+		return
+	if event.keycode == KEY_ALT and event.pressed:
+		if Time.get_ticks_msec() - _time_pressed_keyvim < 300:
+			var line : int = codeedit.get_caret_line()
+			var page : int = codeedit.get_v_scroll_bar().page
+			codeedit.scroll_vertical = line - (page / 2)
+		_time_pressed_keyvim = Time.get_ticks_msec()
 
 
 func _on_codeedit_caret_changed(codeedit : CodeEdit) -> void:

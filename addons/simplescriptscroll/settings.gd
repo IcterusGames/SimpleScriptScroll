@@ -28,6 +28,7 @@ var _plugin : EditorPlugin = null
 @onready var _style_button: OptionButton = %StyleButton
 @onready var _margin_up_spin: SpinBox = %MarginUpSpin
 @onready var _margin_down_spin: SpinBox = %MarginDownSpin
+@onready var _key_vim_check: CheckBox = %KeyVimCheck
 
 
 func set_plugin(plugin : EditorPlugin) -> void:
@@ -42,6 +43,7 @@ func set_plugin(plugin : EditorPlugin) -> void:
 	_margin_down_spin.value = _plugin.scroll_margin_lines_down
 	_margin_up_spin.editable = _plugin.scroll_type == _plugin.SCROLL_MARGIN_LINES
 	_margin_down_spin.editable = _plugin.scroll_type == _plugin.SCROLL_MARGIN_LINES
+	_key_vim_check.button_pressed = _plugin.keyvim_style_enabled
 
 
 func _on_style_button_item_selected(index: int) -> void:
@@ -58,6 +60,11 @@ func _on_margin_up_spin_value_changed(value: float) -> void:
 
 func _on_margin_down_spin_value_changed(value: float) -> void:
 	_plugin.scroll_margin_lines_down = value
+
+
+func _on_key_vim_check_toggled(toggled_on: bool) -> void:
+	_plugin.keyvim_style_enabled = toggled_on
+	_plugin.tool_script_scroll_set_enable(true)
 
 
 func _on_about_rich_text_meta_clicked(meta: Variant) -> void:
