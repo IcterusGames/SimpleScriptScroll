@@ -33,7 +33,7 @@ var _plugin : EditorPlugin = null
 func set_plugin(plugin : EditorPlugin) -> void:
 	_plugin = plugin
 	_style_button.clear()
-	_style_button.add_item("Default", _plugin.SCROLL_DEFAULT)
+	_style_button.add_item("None", _plugin.SCROLL_NONE)
 	_style_button.add_item("Margin Lines", _plugin.SCROLL_MARGIN_LINES)
 	_style_button.add_item("Middle Page", _plugin.SCROLL_MID_PAGE)
 	_style_button.add_item("Jump at end", _plugin.SCROLL_JUMP_AT_END)

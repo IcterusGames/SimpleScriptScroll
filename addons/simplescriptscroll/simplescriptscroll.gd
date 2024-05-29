@@ -24,7 +24,7 @@
 extends EditorPlugin
 
 enum {
-	SCROLL_DEFAULT,
+	SCROLL_NONE,
 	SCROLL_MARGIN_LINES,
 	SCROLL_MID_PAGE,
 	SCROLL_JUMP_AT_END,
@@ -39,13 +39,13 @@ var scroll_margin_lines_down := 5
 
 func _enter_tree() -> void:
 	load_config()
-	if scroll_type != SCROLL_DEFAULT:
+	if scroll_type != SCROLL_NONE:
 		tool_script_scroll_set_enable(true)
 	add_tool_menu_item("Simple Script Scroll Settings", _on_tool_menu_item_pressed)
 
 
 func _exit_tree() -> void:
-	if scroll_type != SCROLL_DEFAULT:
+	if scroll_type != SCROLL_NONE:
 		tool_script_scroll_set_enable(false)
 	remove_tool_menu_item("Simple Script Scroll Settings")
 
@@ -67,7 +67,7 @@ func save_config() -> void:
 
 
 func tool_script_scroll_set_enable(enable : bool) -> void:
-	if scroll_type == SCROLL_DEFAULT:
+	if scroll_type == SCROLL_NONE:
 		enable = false
 	if enable:
 		var script_editor : ScriptEditor = get_editor_interface().get_script_editor()
@@ -111,7 +111,7 @@ func _on_codeedit_caret_changed(codeedit : CodeEdit) -> void:
 	if end > page and page > 1:
 		codeedit.scroll_past_end_of_file = true
 	match scroll_type:
-		SCROLL_DEFAULT:
+		SCROLL_NONE:
 			pass
 		SCROLL_MARGIN_LINES:
 			if line <= codeedit.scroll_vertical + scroll_margin_lines_up:
