@@ -1,0 +1,133 @@
+[gd_scene load_steps=4 format=3 uid="uid://djyggnigqwttg"]
+
+[ext_resource type="Script" path="res://addons/simplescriptscroll/settings.gd" id="1_ehvcg"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bkslj"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gghhl"]
+
+[node name="Settings" type="Window"]
+title = "Simple Script Scroll Settings"
+initial_position = 2
+size = Vector2i(360, 281)
+wrap_controls = true
+transient = true
+exclusive = true
+script = ExtResource("1_ehvcg")
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+custom_minimum_size = Vector2(320, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="TabContainer" type="TabContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="Settings" type="MarginContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+metadata/_tab_index = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Settings"]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Style:"
+
+[node name="StyleButton" type="OptionButton" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Margin Up:"
+
+[node name="MarginUpSpin" type="SpinBox" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 10.0
+
+[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Margin Down:"
+
+[node name="MarginDownSpin" type="SpinBox" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 10.0
+
+[node name="About" type="MarginContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+metadata/_tab_index = 1
+
+[node name="AboutRichText" type="RichTextLabel" parent="MarginContainer/VBoxContainer/TabContainer/About"]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_bkslj")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_gghhl")
+bbcode_enabled = true
+text = "[center][font_size=18]SimpleScriptScroll[/font_size]
+[font_size=10]v. 1.0.0[/font_size]
+[font_size=14]by IcterusGames[/font_size][/center]
+[font_size=7] [/font_size]
+[font_size=12][b]Support me on:[/b]
+[indent][url]https://icterusgames.itch.io/[/url][/indent]
+[indent][url]https://www.patreon.com/IcterusGames[/url][/indent]
+[font_size=7] [/font_size]
+[b]Source code on:[/b]
+[indent][url]https://github.com/IcterusGames[/url][/indent]
+[/font_size]"
+fit_content = true
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="CloseButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Close"
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]
+[connection signal="item_selected" from="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer/StyleButton" to="." method="_on_style_button_item_selected"]
+[connection signal="value_changed" from="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer/MarginUpSpin" to="." method="_on_margin_up_spin_value_changed"]
+[connection signal="value_changed" from="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer/MarginDownSpin" to="." method="_on_margin_down_spin_value_changed"]
+[connection signal="meta_clicked" from="MarginContainer/VBoxContainer/TabContainer/About/AboutRichText" to="." method="_on_about_rich_text_meta_clicked"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/CloseButton" to="." method="_on_close_requested"]
