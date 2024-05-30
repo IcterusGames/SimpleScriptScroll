@@ -2,4 +2,8 @@
 
 A plugin for Godot 4. Change the scrolling behavior of the script editor.
 
-# <img src="previews/simplescriptscroll.gif" />
+<img src="previews/simplescriptscroll.gif" />
+
+## Settings
+
+<img src="previews/settings.png" />
