@@ -110,7 +110,7 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_bkslj")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_gghhl")
 bbcode_enabled = true
 text = "[center][font_size=18]SimpleScriptScroll[/font_size]
-[font_size=10]v. 1.0.0[/font_size]
+[font_size=10]v. 1.0.1[/font_size]
 [font_size=14]by IcterusGames[/font_size][/center]
 [font_size=7] [/font_size]
 [font_size=12][b]Support me on:[/b]

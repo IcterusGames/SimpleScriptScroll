@@ -38,6 +38,7 @@ var scroll_margin_lines_down := 5
 var keyvim_style_enabled := true
 
 var _time_pressed_keyvim := 0
+var _mouse_button_time := 0 # workaround para la versión beta1 de 4.3, que al hacer click hace selección
 
 
 func _enter_tree() -> void:
@@ -102,7 +103,7 @@ func _on_editor_script_changed(_script : Script) -> void:
 	if scroll_type != SCROLL_NONE:
 		if not codeedit.caret_changed.is_connected(_on_codeedit_caret_changed):
 			codeedit.caret_changed.connect(_on_codeedit_caret_changed.bind(codeedit))
-	if keyvim_style_enabled:
+	if keyvim_style_enabled or Engine.get_version_info().hex >= 0x040300: # Verificación de versión por el _mouse_button_time
 		if not codeedit.gui_input.is_connected(_on_codeedit_input):
 			codeedit.gui_input.connect(_on_codeedit_input.bind(codeedit))
 	var end : int = codeedit.get_line_count()
@@ -112,6 +113,8 @@ func _on_editor_script_changed(_script : Script) -> void:
 
 
 func _on_codeedit_input(event : InputEvent, codeedit : CodeEdit) -> void:
+	if event is InputEventMouseButton:
+		_mouse_button_time = Time.get_ticks_msec()
 	if not keyvim_style_enabled or not event is InputEventKey:
 		return
 	if event.keycode == KEY_ALT and event.pressed:
@@ -127,6 +130,8 @@ func _on_codeedit_caret_changed(codeedit : CodeEdit) -> void:
 	var end : int = codeedit.get_line_count()
 	var page : int = codeedit.get_v_scroll_bar().page
 	if codeedit.is_dragging_cursor():
+		return
+	if Time.get_ticks_msec() - _mouse_button_time < 100:
 		return
 	if end > page and page > 1:
 		codeedit.scroll_past_end_of_file = true
