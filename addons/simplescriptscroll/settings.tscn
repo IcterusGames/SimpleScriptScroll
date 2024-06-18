@@ -2,142 +2,151 @@
 
 [ext_resource type="Script" path="res://addons/simplescriptscroll/settings.gd" id="1_ehvcg"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bkslj"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6sh3p"]
+content_margin_bottom = 15.0
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gghhl"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_o567q"]
+content_margin_top = 20.0
 
-[node name="Settings" type="Window"]
+[node name="Settings" type="AcceptDialog"]
 title = "Simple Script Scroll Settings"
 initial_position = 2
-size = Vector2i(335, 256)
-wrap_controls = true
-transient = true
-exclusive = true
+size = Vector2i(341, 394)
+visible = true
 script = ExtResource("1_ehvcg")
 
 [node name="Panel" type="Panel" parent="."]
+visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -49.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
-custom_minimum_size = Vector2(320, 0)
+[node name="Settings" type="MarginContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -49.0
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Settings"]
 layout_mode = 2
 
-[node name="TabContainer" type="TabContainer" parent="MarginContainer/VBoxContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="Settings/VBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-size_flags_vertical = 3
-current_tab = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_6sh3p")
+bbcode_enabled = true
+text = "[center][font_size=18]SimpleScriptScroll[/font_size]
+[font_size=10]v. 1.0.2[/font_size]
+[font_size=14]by IcterusGames[/font_size][/center]
+"
+fit_content = true
 
-[node name="Settings" type="MarginContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-metadata/_tab_index = 0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Settings"]
-layout_mode = 2
-
-[node name="GridContainer" type="GridContainer" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+[node name="GridContainer" type="GridContainer" parent="Settings/VBoxContainer"]
 layout_mode = 2
 columns = 2
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Settings/VBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="Settings/VBoxContainer/GridContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Style:"
 
-[node name="StyleButton" type="OptionButton" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer"]
+[node name="ResetStyleButton" type="Button" parent="Settings/VBoxContainer/GridContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+flat = true
+
+[node name="StyleButton" type="OptionButton" parent="Settings/VBoxContainer/GridContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Settings/VBoxContainer/GridContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="Label2" type="Label" parent="Settings/VBoxContainer/GridContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
 text = "Margin Up:"
 
-[node name="MarginUpSpin" type="SpinBox" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer"]
+[node name="ResetMarginUpButton" type="Button" parent="Settings/VBoxContainer/GridContainer/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
+flat = true
+
+[node name="MarginUpSpin" type="SpinBox" parent="Settings/VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 max_value = 10.0
 
-[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer"]
+[node name="HBoxContainer3" type="HBoxContainer" parent="Settings/VBoxContainer/GridContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="Label3" type="Label" parent="Settings/VBoxContainer/GridContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
 text = "Margin Down:"
 
-[node name="MarginDownSpin" type="SpinBox" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer"]
+[node name="ResetMarginDownButton" type="Button" parent="Settings/VBoxContainer/GridContainer/HBoxContainer3"]
 unique_name_in_owner = true
 layout_mode = 2
+flat = true
+
+[node name="MarginDownSpin" type="SpinBox" parent="Settings/VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 max_value = 10.0
 
-[node name="Control" type="Control" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+[node name="Control" type="Control" parent="Settings/VBoxContainer"]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="KeyVimCheck" type="CheckBox" parent="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+[node name="KeyVimCheck" type="CheckBox" parent="Settings/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Center cursor by pressing alt twice"
+text = "Center cursor by pressing 'Alt' twice"
 
-[node name="About" type="MarginContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
-visible = false
+[node name="AboutRichText" type="RichTextLabel" parent="Settings/VBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-metadata/_tab_index = 1
-
-[node name="AboutRichText" type="RichTextLabel" parent="MarginContainer/VBoxContainer/TabContainer/About"]
-custom_minimum_size = Vector2(320, 0)
-layout_mode = 2
-theme_override_styles/focus = SubResource("StyleBoxEmpty_bkslj")
-theme_override_styles/normal = SubResource("StyleBoxEmpty_gghhl")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_o567q")
 bbcode_enabled = true
-text = "[center][font_size=18]SimpleScriptScroll[/font_size]
-[font_size=10]v. 1.0.1[/font_size]
-[font_size=14]by IcterusGames[/font_size][/center]
-[font_size=7] [/font_size]
-[font_size=12][b]Support me on:[/b]
-[indent][url]https://icterusgames.itch.io/[/url][/indent]
-[indent][url]https://www.patreon.com/IcterusGames[/url][/indent]
-[font_size=7] [/font_size]
-[b]Source code on:[/b]
-[indent][url]https://github.com/IcterusGames[/url][/indent]
-[/font_size]"
+text = "[font_size=12][b]Support me on:[/b][/font_size]
+[font_size=8]
+[/font_size][font_size=12][indent][url]https://icterusgames.itch.io/[/url][/indent][/font_size]
+[font_size=6]
+[/font_size][font_size=12][indent][url]https://www.patreon.com/IcterusGames[/url][/indent][/font_size]"
 fit_content = true
 
-[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="CloseButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(120, 0)
-layout_mode = 2
-text = "Close"
-
 [connection signal="close_requested" from="." to="." method="_on_close_requested"]
-[connection signal="item_selected" from="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer/StyleButton" to="." method="_on_style_button_item_selected"]
-[connection signal="value_changed" from="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer/MarginUpSpin" to="." method="_on_margin_up_spin_value_changed"]
-[connection signal="value_changed" from="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/GridContainer/MarginDownSpin" to="." method="_on_margin_down_spin_value_changed"]
-[connection signal="toggled" from="MarginContainer/VBoxContainer/TabContainer/Settings/VBoxContainer/KeyVimCheck" to="." method="_on_key_vim_check_toggled"]
-[connection signal="meta_clicked" from="MarginContainer/VBoxContainer/TabContainer/About/AboutRichText" to="." method="_on_about_rich_text_meta_clicked"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/CloseButton" to="." method="_on_close_requested"]
+[connection signal="pressed" from="Settings/VBoxContainer/GridContainer/HBoxContainer/ResetStyleButton" to="." method="_on_reset_style_button_pressed"]
+[connection signal="item_selected" from="Settings/VBoxContainer/GridContainer/StyleButton" to="." method="_on_style_button_item_selected"]
+[connection signal="pressed" from="Settings/VBoxContainer/GridContainer/HBoxContainer2/ResetMarginUpButton" to="." method="_on_reset_margin_up_button_pressed"]
+[connection signal="value_changed" from="Settings/VBoxContainer/GridContainer/MarginUpSpin" to="." method="_on_margin_up_spin_value_changed"]
+[connection signal="pressed" from="Settings/VBoxContainer/GridContainer/HBoxContainer3/ResetMarginDownButton" to="." method="_on_reset_margin_down_button_pressed"]
+[connection signal="value_changed" from="Settings/VBoxContainer/GridContainer/MarginDownSpin" to="." method="_on_margin_down_spin_value_changed"]
+[connection signal="toggled" from="Settings/VBoxContainer/KeyVimCheck" to="." method="_on_key_vim_check_toggled"]
+[connection signal="meta_clicked" from="Settings/VBoxContainer/AboutRichText" to="." method="_on_about_rich_text_meta_clicked"]

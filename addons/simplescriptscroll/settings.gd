@@ -29,6 +29,9 @@ var _plugin : EditorPlugin = null
 @onready var _margin_up_spin: SpinBox = %MarginUpSpin
 @onready var _margin_down_spin: SpinBox = %MarginDownSpin
 @onready var _key_vim_check: CheckBox = %KeyVimCheck
+@onready var _reset_style_button: Button = %ResetStyleButton
+@onready var _reset_margin_up_button: Button = %ResetMarginUpButton
+@onready var _reset_margin_down_button: Button = %ResetMarginDownButton
 
 
 func set_plugin(plugin : EditorPlugin) -> void:
@@ -43,28 +46,54 @@ func set_plugin(plugin : EditorPlugin) -> void:
 	_margin_down_spin.value = _plugin.scroll_margin_lines_down
 	_margin_up_spin.editable = _plugin.scroll_type == _plugin.SCROLL_MARGIN_LINES
 	_margin_down_spin.editable = _plugin.scroll_type == _plugin.SCROLL_MARGIN_LINES
+	_reset_margin_up_button.disabled = _plugin.scroll_type != _plugin.SCROLL_MARGIN_LINES
+	_reset_margin_down_button.disabled = _plugin.scroll_type != _plugin.SCROLL_MARGIN_LINES
 	_key_vim_check.button_pressed = _plugin.keyvim_style_enabled
+	_reset_style_button.visible = _plugin.scroll_type != _plugin.DEFAULT_SCROLL_TYPE
+	_reset_margin_up_button.visible = _plugin.scroll_margin_lines_up != _plugin.DEFAULT_SCROLL_MARGIN_LINES_UP
+	_reset_margin_down_button.visible = _plugin.scroll_margin_lines_down != _plugin.DEFAULT_SCROLL_MARGIN_LINES_DOWN
+	_reset_style_button.icon = get_theme_icon("Reload", "EditorIcons")
+	_reset_margin_down_button.icon = get_theme_icon("Reload", "EditorIcons")
+	_reset_margin_up_button.icon = get_theme_icon("Reload", "EditorIcons")
 
 
 func _on_style_button_item_selected(index: int) -> void:
 	var id = _style_button.get_item_id(index)
 	_margin_up_spin.editable = id == _plugin.SCROLL_MARGIN_LINES
 	_margin_down_spin.editable = id == _plugin.SCROLL_MARGIN_LINES
+	_reset_margin_up_button.disabled = id != _plugin.SCROLL_MARGIN_LINES
+	_reset_margin_down_button.disabled = id != _plugin.SCROLL_MARGIN_LINES
 	_plugin.scroll_type = id
 	_plugin.tool_script_scroll_set_enable(true)
+	_reset_style_button.visible = _plugin.scroll_type != _plugin.DEFAULT_SCROLL_TYPE
 
 
 func _on_margin_up_spin_value_changed(value: float) -> void:
 	_plugin.scroll_margin_lines_up = value
+	_reset_margin_up_button.visible = _plugin.scroll_margin_lines_up != _plugin.DEFAULT_SCROLL_MARGIN_LINES_UP
 
 
 func _on_margin_down_spin_value_changed(value: float) -> void:
 	_plugin.scroll_margin_lines_down = value
+	_reset_margin_down_button.visible = _plugin.scroll_margin_lines_down != _plugin.DEFAULT_SCROLL_MARGIN_LINES_DOWN
 
 
 func _on_key_vim_check_toggled(toggled_on: bool) -> void:
 	_plugin.keyvim_style_enabled = toggled_on
 	_plugin.tool_script_scroll_set_enable(true)
+
+
+func _on_reset_style_button_pressed() -> void:
+	_style_button.select(_style_button.get_item_index(_plugin.DEFAULT_SCROLL_TYPE))
+	_on_style_button_item_selected(_style_button.get_item_index(_plugin.DEFAULT_SCROLL_TYPE))
+
+
+func _on_reset_margin_up_button_pressed() -> void:
+	_margin_up_spin.value = _plugin.DEFAULT_SCROLL_MARGIN_LINES_UP
+
+
+func _on_reset_margin_down_button_pressed() -> void:
+	_margin_down_spin.value = _plugin.DEFAULT_SCROLL_MARGIN_LINES_DOWN
 
 
 func _on_about_rich_text_meta_clicked(meta: Variant) -> void:

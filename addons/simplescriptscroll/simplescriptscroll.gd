@@ -31,14 +31,18 @@ enum {
 }
 
 const SETTINGS = preload("res://addons/simplescriptscroll/settings.tscn")
+const DEFAULT_SCROLL_TYPE := SCROLL_MARGIN_LINES
+const DEFAULT_SCROLL_MARGIN_LINES_UP := 5
+const DEFAULT_SCROLL_MARGIN_LINES_DOWN := 5
 
-var scroll_type := SCROLL_MARGIN_LINES
-var scroll_margin_lines_up := 5
-var scroll_margin_lines_down := 5
+var scroll_type := DEFAULT_SCROLL_TYPE
+var scroll_margin_lines_up := DEFAULT_SCROLL_MARGIN_LINES_UP
+var scroll_margin_lines_down := DEFAULT_SCROLL_MARGIN_LINES_DOWN
 var keyvim_style_enabled := true
 
 var _time_pressed_keyvim := 0
 var _mouse_button_time := 0 # workaround para la versión beta1 de 4.3, que al hacer click hace selección
+var _prev_line := 0
 
 
 func _enter_tree() -> void:
@@ -121,7 +125,8 @@ func _on_codeedit_input(event : InputEvent, codeedit : CodeEdit) -> void:
 		if Time.get_ticks_msec() - _time_pressed_keyvim < 300:
 			var line : int = codeedit.get_caret_line()
 			var page : int = codeedit.get_v_scroll_bar().page
-			codeedit.scroll_vertical = line - (page / 2)
+			var tween = create_tween()
+			tween.tween_property(codeedit, "scroll_vertical", line - (page / 2), 0.1).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		_time_pressed_keyvim = Time.get_ticks_msec()
 
 
@@ -131,6 +136,9 @@ func _on_codeedit_caret_changed(codeedit : CodeEdit) -> void:
 	var page : int = codeedit.get_v_scroll_bar().page
 	if codeedit.is_dragging_cursor():
 		return
+	if line == _prev_line:
+		return
+	_prev_line = line
 	if Time.get_ticks_msec() - _mouse_button_time < 100:
 		return
 	if end > page and page > 1:
@@ -148,7 +156,8 @@ func _on_codeedit_caret_changed(codeedit : CodeEdit) -> void:
 				codeedit.scroll_vertical = line - (page / 2)
 		SCROLL_JUMP_AT_END:
 			if line >= end - 1:
-				codeedit.scroll_vertical = line - ((page / 2) - (line - end))
+				var tween = create_tween()
+				tween.tween_property(codeedit, "scroll_vertical", line - ((page / 2) - (line - end)), 0.1).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 
 func _on_tool_menu_item_pressed() -> void:
