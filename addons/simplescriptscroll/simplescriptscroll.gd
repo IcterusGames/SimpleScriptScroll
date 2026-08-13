@@ -83,6 +83,7 @@ func tool_script_scroll_set_enable(enable : bool) -> void:
 		if not script_editor.editor_script_changed.is_connected(_on_editor_script_changed):
 			script_editor.editor_script_changed.connect(_on_editor_script_changed)
 		_on_editor_script_changed(null)
+		_wait_load_project()
 	else:
 		var script_editor : ScriptEditor = get_editor_interface().get_script_editor()
 		if script_editor.editor_script_changed.is_connected(_on_editor_script_changed):
@@ -101,6 +102,14 @@ func tool_script_scroll_set_enable(enable : bool) -> void:
 				vscroll.value_changed.disconnect(_on_codeedit_scroll_changed)
 
 
+func _wait_load_project() -> void:
+	for child in get_tree().root.get_children():
+		if child.is_class("ProgressDialog") and child.visible:
+			get_tree().create_timer(0.5).timeout.connect(_wait_load_project)
+			return
+	_on_editor_script_changed(null)
+
+
 func _on_editor_script_changed(_script : Script) -> void:
 	var editor := get_editor_interface().get_script_editor().get_current_editor()
 	if editor == null:
@@ -117,17 +126,21 @@ func _on_editor_script_changed(_script : Script) -> void:
 	var vscroll: VScrollBar = codeedit.get_v_scroll_bar()
 	if not vscroll.value_changed.is_connected(_on_codeedit_scroll_changed):
 		vscroll.value_changed.connect(_on_codeedit_scroll_changed.bind(codeedit, vscroll))
-	var end : int = codeedit.get_line_count()
-	var page : int = codeedit.get_v_scroll_bar().page
-	if end > page and page > 1:
+	var end : int = codeedit.get_total_visible_line_count()
+	var vpage: int = codeedit.size.y / codeedit.get_line_height()
+	if end > vpage / 2.0:
 		codeedit.scroll_past_end_of_file = true
+	var line : int = codeedit.get_caret_line()
+	line += codeedit.get_visible_line_count_in_range(0, line) - line
+	if line == end:
+		_on_codeedit_scroll_changed(codeedit.get_v_scroll_bar().value, codeedit, codeedit.get_v_scroll_bar())
 
 
 func _on_codeedit_scroll_changed(value: float, codeedit: CodeEdit, vscroll: VScrollBar) -> void:
-	var page : int = codeedit.get_v_scroll_bar().page
-	var end : int = codeedit.get_line_count()
-	if value > (end - page / 2) - 1:
-		vscroll.value = (end - page / 2) - 1
+	var page : int = int(codeedit.get_v_scroll_bar().page)
+	var end : int = codeedit.get_total_visible_line_count()
+	if value > (end - page / 2.0) - 1:
+		vscroll.value = (end - page / 2.0) - 1
 
 
 func _on_codeedit_input(event : InputEvent, codeedit : CodeEdit) -> void:
@@ -137,25 +150,32 @@ func _on_codeedit_input(event : InputEvent, codeedit : CodeEdit) -> void:
 		return
 	if event.keycode == KEY_ALT and event.pressed:
 		if Time.get_ticks_msec() - _time_pressed_keyvim < 300:
+			var end : int = codeedit.get_total_visible_line_count()
+			var vpage: int = int(codeedit.size.y / codeedit.get_line_height())
+			if end > vpage / 2.0:
+				codeedit.scroll_past_end_of_file = true
+			var page : int = int(codeedit.get_v_scroll_bar().page)
 			var line : int = codeedit.get_caret_line()
-			var page : int = codeedit.get_v_scroll_bar().page
 			var tween = create_tween()
-			tween.tween_property(codeedit, "scroll_vertical", line - (page / 2), 0.1).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+			line += codeedit.get_visible_line_count_in_range(0, line) - line
+			tween.tween_property(codeedit, "scroll_vertical", line - (page / 2.0), 0.1).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		_time_pressed_keyvim = Time.get_ticks_msec()
 
 
 func _on_codeedit_caret_changed(codeedit : CodeEdit) -> void:
 	var line : int = codeedit.get_caret_line()
-	var end : int = codeedit.get_line_count()
-	var page : int = codeedit.get_v_scroll_bar().page
+	var end : int = codeedit.get_total_visible_line_count()
+	var page : int = int(codeedit.get_v_scroll_bar().page)
+	var vpage: int = int(codeedit.size.y / codeedit.get_line_height())
 	if codeedit.is_dragging_cursor():
 		return
+	line += codeedit.get_visible_line_count_in_range(0, line) - line
 	if line == _prev_line:
 		return
 	_prev_line = line
 	if Time.get_ticks_msec() - _mouse_button_time < 100:
 		return
-	if end > page and page > 1:
+	if end > vpage / 2.0:
 		codeedit.scroll_past_end_of_file = true
 	match scroll_type:
 		SCROLL_NONE:
@@ -166,15 +186,16 @@ func _on_codeedit_caret_changed(codeedit : CodeEdit) -> void:
 			if line >= codeedit.scroll_vertical + (page - scroll_margin_lines_down):
 				codeedit.scroll_vertical = line - (page - scroll_margin_lines_down)
 		SCROLL_MID_PAGE:
-			if line >= codeedit.scroll_vertical + (page / 2):
-				codeedit.scroll_vertical = line - (page / 2)
+			if line >= codeedit.scroll_vertical + (page / 2.0):
+				codeedit.scroll_vertical = line - (page / 2.0)
 		SCROLL_JUMP_AT_END:
 			if line >= end - 1:
 				var tween = create_tween()
-				tween.tween_property(codeedit, "scroll_vertical", line - ((page / 2) - (line - end)), 0.1).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+				tween.tween_property(codeedit, "scroll_vertical", line - ((page / 2.0) - (line - end)), 0.1).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 
 func _on_tool_menu_item_pressed() -> void:
-	var window = SETTINGS.instantiate()
+	var window: Window = SETTINGS.instantiate()
 	get_editor_interface().get_base_control().add_child(window)
 	window.set_plugin(self)
+	window.popup_centered()
